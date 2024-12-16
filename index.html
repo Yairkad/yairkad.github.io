@@ -161,15 +161,18 @@
         }
 
         .modal-content {
+            background: #dcf8ff;
+            max-width: 500px;
+            width: 100%;          /* תופס את כל הרוחב עד למקסימום */
+            max-height: 85vh;     /* גובה מקסימלי של 90% מגובה המסך */
+            overflow-y: auto;     /* מוסיף גלילה אוטומטית אם צריך */
+            margin: 2rem auto;
+            padding: 1.5rem;
             background: var(--surface);
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            max-width: 500px;
-            margin: 2rem auto;
-            animation: slideIn 0.3s ease-out;
         }
-
+        
         @keyframes slideIn {
             from {
                 transform: translateY(-10px);
@@ -184,7 +187,22 @@
         .form-group {
             margin-bottom: 1rem;
         }
-
+        
+        #bikeForm {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;  /* בשביל מיקום הכפתורים */
+        }
+        
+        .actions-group {
+            position: sticky;    /* נשאר תמיד בתחתית */
+            bottom: 0;          
+            background: var(--surface);
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;   /* דוחף את הכפתורים לתחתית */
+        }
         label {
             display: block;
             margin-bottom: 0.5rem;
