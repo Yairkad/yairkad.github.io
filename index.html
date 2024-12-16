@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניהול נתונים</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .print-button {
+            background-color: #2196F3;
+        }
+        .delete-button {
+            background-color: #f44336;
+        }
+        .edit-button {
+            background-color: #ff9800;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .search-box {
+            margin: 20px 0;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>מערכת ניהול נתונים</h1>
+        
+        <!-- טופס הזנת נתונים -->
+        <div class="form-group no-print">
+            <h2>הזנת נתונים חדשים</h2>
+            <form id="dataForm">
+                <label for="name">שם:</label>
+                <input type="text" id="name" required>
+                
+                <label for="description">תיאור:</label>
+                <textarea id="description" rows="4"></textarea>
+                
+                <label for="date">תאריך:</label>
+                <input type="date" id="date" required>
+                
+                <button type="submit">שמור נתונים</button>
+            </form>
+        </div>
+
+        <!-- חיפוש -->
+        <div class="search-box no-print">
+            <label for="search">חיפוש:</label>
+            <input type="text" id="search" placeholder="הקלד לחיפוש...">
+        </div>
+
+        <!-- כפתורי פעולה -->
+        <div class="no-print">
+            <button onclick="printData()" class="print-button">הדפסה</button>
+            <button onclick="exportToCSV()" class="edit-button">ייצוא ל-Excel</button>
+        </div>
+
+        <!-- טבלת נתונים -->
+        <div id="dataTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>שם</th>
+                        <th>תיאור</th>
+                        <th>תאריך</th>
+                        <th class="no-print">פעולות</th>
+                    </tr>
+                </thead>
+                <tbody id="dataBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // מערך לשמירת הנתונים
+        let data = JSON.parse(localStorage.getItem('formData')) || [];
+
+        // הוספת נתונים חדשים
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newData = {
+                id: Date.now(), // מזהה ייחודי
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                date: document.getElementById('date').value
+            };
+            
+            data.push(newData);
+            saveToLocalStorage();
+            renderData();
+            this.reset();
+        });
+
+        // חיפוש
+        document.getElementById('search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredData = data.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.description.toLowerCase().includes(searchTerm) ||
+                item.date.includes(searchTerm)
+            );
+            renderData(filteredData);
+        });
+
+        // הצגת הנתונים בטבלה
+        function renderData(dataToRender = data) {
+            const tbody = document.getElementById('dataBody');
+            tbody.innerHTML = '';
+            
+            dataToRender.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.description}</td>
+                    <td>${item.date}</td>
+                    <td class="no-print">
+                        <button onclick="editItem(${item.id})" class="edit-button">עריכה</button>
+                        <button onclick="deleteItem(${item.id})" class="delete-button">מחיקה</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // עריכת פריט
+        function editItem(id) {
+            const item = data.find(x => x.id === id);
+            if (item) {
+                document.getElementById('name').value = item.name;
+                document.getElementById('description').value = item.description;
+                document.getElementById('date').value = item.date;
+                
+                // מחיקת הפריט הישן
+                deleteItem(id);
+                
+                // גלילה לטופס
+                document.getElementById('dataForm').scrollIntoView();
+            }
+        }
+
+        // מחיקת פריט
+        function deleteItem(id) {
+            if (confirm('האם אתה בטוח שברצונך למחוק פריט זה?')) {
+                data = data.filter(x => x.id !== id);
+                saveToLocalStorage();
+                renderData();
+            }
+        }
+
+        // שמירה ב-localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('formData', JSON.stringify(data));
+        }
+
+        // הדפסה
+        function printData() {
+            window.print();
+        }
+
+        // ייצוא ל-Excel (CSV)
+        function exportToCSV() {
+            const csvRows = [];
+            const headers = ['שם', 'תיאור', 'תאריך'];
+            csvRows.push(headers.join(','));
+
+            data.forEach(item => {
+                const values = [
+                    `"${item.name}"`,
+                    `"${item.description}"`,
+                    `"${item.date}"`
+                ];
+                csvRows.push(values.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob(['\ufeff' + csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'נתונים.csv';
+            link.click();
+        }
+
+        // טעינת הנתונים בטעינת העמוד
+        renderData();
+    </script>
+</body>
+</html>
