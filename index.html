@@ -182,7 +182,7 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         label {
@@ -200,6 +200,23 @@
             font-size: 1rem;
         }
 
+        .issues-input {
+            width: 100%;           /* תופס את כל הרוחב של הקונטיינר */
+            height: 100px;         /* גובה קבוע */
+            resize: none;          /* מבטל אפשרות שינוי גודל */
+            overflow-y: auto;      /* מוסיף גלילה אנכית אוטומטית */
+            overflow-x: hidden;    /* מסתיר גלילה אופקית */
+            padding: 0.5rem;       /* ריווח פנימי כמו ב-input המקורי */
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .issues-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
         input[type="text"]:focus,
         select:focus {
             outline: none;
@@ -306,9 +323,9 @@
                     <label>סטטוס</label>
                     <select name="status" required>
                         <option value="">בחר סטטוס</option>
-                        <option value="available">זמין</option>
-                        <option value="inUse">בשימוש</option>
-                        <option value="maintenance">בטיפול</option>
+                        <option value="available">חדש</option>
+                        <option value="inUse">חזר מרוכב</option>
+                        <option value="maintenance">למכירה</option>
                     </select>
                 </div>
 
@@ -336,9 +353,9 @@
 
                 <div class="form-group">
                     <label>תקלות</label>
-                    <input type="text" name="issues" placeholder="אם יש">
+                    <textarea name="issues" placeholder="אם יש" class="issues-input"></textarea>
                 </div>
-
+    
                 <div class="actions-group">
                     <button type="submit" class="btn-primary">שמור</button>
                     <button type="button" class="btn-secondary" onclick="closeModal()">ביטול</button>
