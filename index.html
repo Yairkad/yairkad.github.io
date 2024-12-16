@@ -3,244 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת ניהול נתונים</title>
+    <title>ניהול אופניים חשמליים</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .form-group {
-            margin-bottom: 15px;
+
+        header h1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-align: center;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+
+        nav {
+            background: var(--surface);
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
         }
-        button {
-            background-color: #4CAF50;
+
+        nav a {
+            color: var(--secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            background: var(--background);
+            color: var(--primary);
+        }
+
+        nav a.active {
+            background: var(--primary);
             color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        button {
             cursor: pointer;
-            margin-right: 10px;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
-        .print-button {
-            background-color: #2196F3;
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
         }
-        .delete-button {
-            background-color: #f44336;
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
         }
-        .edit-button {
-            background-color: #ff9800;
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: right;
-        }
+
         th {
-            background-color: #f2f2f2;
+            text-align: right;
+            padding: 1rem;
+            background: var(--background);
+            font-weight: 500;
+            color: var(--secondary);
         }
-        .search-box {
-            margin: 20px 0;
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
         }
-        @media print {
-            .no-print {
-                display: none;
+
+        tr:hover {
+            background: var(--background);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
             }
-            .container {
-                box-shadow: none;
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+        }
+
+        .status-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-available { background: #dcfce7; color: #166534; }
+        .status-inUse { background: #dbeafe; color: #1e40af; }
+        .status-maintenance { background: #fef3c7; color: #92400e; }
+
+        .actions-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 1rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            td, th {
+                white-space: nowrap;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>מערכת ניהול נתונים</h1>
-        
-        <!-- טופס הזנת נתונים -->
-        <div class="form-group no-print">
-            <h2>הזנת נתונים חדשים</h2>
-            <form id="dataForm">
-                <label for="name">שם:</label>
-                <input type="text" id="name" required>
-                
-                <label for="description">תיאור:</label>
-                <textarea id="description" rows="4"></textarea>
-                
-                <label for="date">תאריך:</label>
-                <input type="date" id="date" required>
-                
-                <button type="submit">שמור נתונים</button>
+    <header>
+        <h1>ניהול אופניים חשמליים</h1>
+    </header>
+
+    <nav>
+        <div class="container">
+            <a href="#" class="active" onclick="showSection('inventory')">מלאי</a>
+            <a href="#" onclick="showSection('customers')">לקוחות</a>
+            <a href="#" onclick="showSection('history')">היסטוריה</a>
+        </div>
+    </nav>
+
+    <section id="inventory">
+        <div class="card">
+            <div class="actions">
+                <h2>מלאי אופניים</h2>
+                <button class="btn-primary" onclick="openModal()">הוספת אופניים +</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מספר סידורי</th>
+                            <th>סטטוס</th>
+                            <th>מספר רישוי/שלדה</th>
+                            <th>שרשרת</th>
+                            <th>מטען</th>
+                            <th>תקלות</th>
+                            <th>פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bikesList"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="addBikeModal" class="modal">
+        <div class="modal-content">
+            <h2>הוספת אופניים חדשים</h2>
+            <form id="bikeForm" onsubmit="saveBike(event)">
+                <div class="form-group">
+                    <label>מספר סידורי</label>
+                    <input type="text" name="serialNumber" required>
+                </div>
+
+                <div class="form-group">
+                    <label>סטטוס</label>
+                    <select name="status" required>
+                        <option value="">בחר סטטוס</option>
+                        <option value="available">זמין</option>
+                        <option value="inUse">בשימוש</option>
+                        <option value="maintenance">בטיפול</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="hasLicense" id="hasLicense" onchange="toggleLicenseInput()">
+                        <label for="hasLicense">יש לוחית רישוי</label>
+                    </div>
+                    <input type="text" name="licenseNumber" id="licenseInput" class="hidden" placeholder="הכנס מספר לוחית">
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="hasChain" id="hasChain">
+                        <label for="hasChain">יש שרשרת</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="hasCharger" id="hasCharger">
+                        <label for="hasCharger">יש מטען</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>תקלות</label>
+                    <input type="text" name="issues" placeholder="אם יש">
+                </div>
+
+                <div class="actions-group">
+                    <button type="submit" class="btn-primary">שמור</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal()">ביטול</button>
+                </div>
             </form>
-        </div>
-
-        <!-- חיפוש -->
-        <div class="search-box no-print">
-            <label for="search">חיפוש:</label>
-            <input type="text" id="search" placeholder="הקלד לחיפוש...">
-        </div>
-
-        <!-- כפתורי פעולה -->
-        <div class="no-print">
-            <button onclick="printData()" class="print-button">הדפסה</button>
-            <button onclick="exportToCSV()" class="edit-button">ייצוא ל-Excel</button>
-        </div>
-
-        <!-- טבלת נתונים -->
-        <div id="dataTable">
-            <table>
-                <thead>
-                    <tr>
-                        <th>שם</th>
-                        <th>תיאור</th>
-                        <th>תאריך</th>
-                        <th class="no-print">פעולות</th>
-                    </tr>
-                </thead>
-                <tbody id="dataBody"></tbody>
-            </table>
         </div>
     </div>
 
     <script>
-        // מערך לשמירת הנתונים
-        let data = JSON.parse(localStorage.getItem('formData')) || [];
+        let bikes = JSON.parse(localStorage.getItem('bikes') || '[]');
 
-        // הוספת נתונים חדשים
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newData = {
-                id: Date.now(), // מזהה ייחודי
-                name: document.getElementById('name').value,
-                description: document.getElementById('description').value,
-                date: document.getElementById('date').value
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.querySelector(`nav a[onclick*="${id}"]`).classList.add('active');
+            if(id === 'inventory') renderBikes();
+        }
+
+        function toggleLicenseInput() {
+            const hasLicense = document.getElementById('hasLicense').checked;
+            const licenseInput = document.getElementById('licenseInput');
+            licenseInput.classList.toggle('hidden', !hasLicense);
+            licenseInput.required = hasLicense;
+            if(!hasLicense) licenseInput.value = '';
+        }
+
+        function openModal() {
+            document.getElementById('addBikeModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('addBikeModal').style.display = 'none';
+            document.getElementById('bikeForm').reset();
+            document.getElementById('licenseInput').classList.add('hidden');
+        }
+
+        function getStatusTag(status) {
+            const statusMap = {
+                'available': ['זמין', 'status-available'],
+                'inUse': ['בשימוש', 'status-inUse'],
+                'maintenance': ['בטיפול', 'status-maintenance']
             };
-            
-            data.push(newData);
-            saveToLocalStorage();
-            renderData();
-            this.reset();
-        });
+            const [text, className] = statusMap[status] || ['לא ידוע', ''];
+            return `<span class="status-tag ${className}">${text}</span>`;
+        }
 
-        // חיפוש
-        document.getElementById('search').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredData = data.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) ||
-                item.description.toLowerCase().includes(searchTerm) ||
-                item.date.includes(searchTerm)
-            );
-            renderData(filteredData);
-        });
+        function saveBike(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const bike = Object.fromEntries(formData);
+            bikes.push(bike);
+            localStorage.setItem('bikes', JSON.stringify(bikes));
+            renderBikes();
+            closeModal();
+        }
 
-        // הצגת הנתונים בטבלה
-        function renderData(dataToRender = data) {
-            const tbody = document.getElementById('dataBody');
-            tbody.innerHTML = '';
-            
-            dataToRender.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.description}</td>
-                    <td>${item.date}</td>
-                    <td class="no-print">
-                        <button onclick="editItem(${item.id})" class="edit-button">עריכה</button>
-                        <button onclick="deleteItem(${item.id})" class="delete-button">מחיקה</button>
+        function renderBikes() {
+            const html = bikes.map((bike, index) => `
+                <tr>
+                    <td>${bike.serialNumber}</td>
+                    <td>${getStatusTag(bike.status)}</td>
+                    <td>${bike.hasLicense === 'on' ? bike.licenseNumber : 'אין'}</td>
+                    <td>${bike.hasChain === 'on' ? 'כן' : 'לא'}</td>
+                    <td>${bike.hasCharger === 'on' ? 'כן' : 'לא'}</td>
+                    <td>${bike.issues || 'אין'}</td>
+                    <td>
+                        <div class="actions-group">
+                            <button class="btn-danger" onclick="deleteBike(${index})">מחק</button>
+                        </div>
                     </td>
-                `;
-                tbody.appendChild(row);
-            });
+                </tr>
+            `).join('');
+            document.getElementById('bikesList').innerHTML = html;
         }
 
-        // עריכת פריט
-        function editItem(id) {
-            const item = data.find(x => x.id === id);
-            if (item) {
-                document.getElementById('name').value = item.name;
-                document.getElementById('description').value = item.description;
-                document.getElementById('date').value = item.date;
-                
-                // מחיקת הפריט הישן
-                deleteItem(id);
-                
-                // גלילה לטופס
-                document.getElementById('dataForm').scrollIntoView();
+        function deleteBike(index) {
+            if(confirm('האם למחוק אופניים אלו?')) {
+                bikes.splice(index, 1);
+                localStorage.setItem('bikes', JSON.stringify(bikes));
+                renderBikes();
             }
         }
 
-        // מחיקת פריט
-        function deleteItem(id) {
-            if (confirm('האם אתה בטוח שברצונך למחוק פריט זה?')) {
-                data = data.filter(x => x.id !== id);
-                saveToLocalStorage();
-                renderData();
-            }
-        }
-
-        // שמירה ב-localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('formData', JSON.stringify(data));
-        }
-
-        // הדפסה
-        function printData() {
-            window.print();
-        }
-
-        // ייצוא ל-Excel (CSV)
-        function exportToCSV() {
-            const csvRows = [];
-            const headers = ['שם', 'תיאור', 'תאריך'];
-            csvRows.push(headers.join(','));
-
-            data.forEach(item => {
-                const values = [
-                    `"${item.name}"`,
-                    `"${item.description}"`,
-                    `"${item.date}"`
-                ];
-                csvRows.push(values.join(','));
-            });
-
-            const csvString = csvRows.join('\n');
-            const blob = new Blob(['\ufeff' + csvString], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'נתונים.csv';
-            link.click();
-        }
-
-        // טעינת הנתונים בטעינת העמוד
-        renderData();
+        showSection('inventory');
     </script>
 </body>
 </html>
