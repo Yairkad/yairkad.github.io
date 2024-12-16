@@ -293,10 +293,12 @@
         </div>
     </section>
 
-    <div id="addBikeModal" class="modal">
-        <div class="modal-content">
-            <h2>הוספת אופניים חדשים</h2>
-            <form id="bikeForm" onsubmit="saveBike(event)">
+   <div id="addBikeModal" class="modal">
+    <div class="modal-content">
+        <h2 class="form-full">הוספת אופניים חדשים</h2>
+        <form id="bikeForm" onsubmit="saveBike(event)">
+            <div class="form-grid">
+                <!-- פרטים בסיסיים -->
                 <div class="form-group">
                     <label>מספר סידורי</label>
                     <input type="text" name="serialNumber" required>
@@ -312,40 +314,43 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <!-- אביזרים נלווים -->
+                <div class="checkbox-wrapper">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasLicense" id="hasLicense" onchange="toggleLicenseInput()">
                         <label for="hasLicense">יש לוחית רישוי</label>
                     </div>
-                    <input type="text" name="licenseNumber" id="licenseInput" class="hidden" placeholder="הכנס מספר לוחית">
-                </div>
-
-                <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasChain" id="hasChain">
                         <label for="hasChain">יש שרשרת</label>
                     </div>
-                </div>
-
-                <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasCharger" id="hasCharger">
                         <label for="hasCharger">יש מטען</label>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>תקלות</label>
-                    <input type="text" name="issues" placeholder="אם יש">
+                <!-- מספר לוחית -->
+                <div class="form-group form-full hidden" id="licenseInputGroup">
+                    <label>מספר לוחית רישוי</label>
+                    <input type="text" name="licenseNumber" id="licenseInput">
                 </div>
 
-                <div class="actions-group">
-                    <button type="submit" class="btn-primary">שמור</button>
-                    <button type="button" class="btn-secondary" onclick="closeModal()">ביטול</button>
+                <!-- תקלות -->
+                <div class="form-group form-full">
+                    <label>תקלות</label>
+                    <textarea name="issues" placeholder="אם יש תקלות, פרט כאן..."></textarea>
                 </div>
-            </form>
-        </div>
+
+                <!-- כפתורים -->
+                <div class="actions-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">ביטול</button>
+                    <button type="submit" class="btn btn-primary">שמור</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
     <script>
         let bikes = JSON.parse(localStorage.getItem('bikes') || '[]');
