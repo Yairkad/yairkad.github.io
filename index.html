@@ -4,291 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ניהול אופניים חשמליים</title>
-    <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --secondary: #64748b;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #eab308;
-            --background: #f1f5f9;
-            --surface: #ffffff;
-            --text: #0f172a;
-            --border: #e2e8f0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            max-width: 1200px;
-            margin: 0 auto;
-            font-size: 1.75rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        nav {
-            background: var(--surface);
-            padding: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        nav a {
-            color: var(--secondary);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        nav a:hover {
-            background: var(--background);
-            color: var(--primary);
-        }
-
-        nav a.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: var(--surface);
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        button {
-            cursor: pointer;
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: right;
-            padding: 1rem;
-            background: var(--background);
-            font-weight: 500;
-            color: var(--secondary);
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover {
-            background: var(--background);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            padding: 1rem;
-        }
-
-        .modal-content {
-            background: #dcf8ff;
-            max-width: 500px;
-            width: 100%;          /* תופס את כל הרוחב עד למקסימום */
-            max-height: 85vh;     /* גובה מקסימלי של 90% מגובה המסך */
-            overflow-y: auto;     /* מוסיף גלילה אוטומטית אם צריך */
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background: var(--surface);
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateY(-10px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        #bikeForm {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            position: relative;  /* בשביל מיקום הכפתורים */
-        }
-        
-        .actions-group {
-            position: sticky;    /* נשאר תמיד בתחתית */
-            bottom: 0;          
-            background: var(--surface);
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            margin-top: auto;   /* דוחף את הכפתורים לתחתית */
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .issues-input {
-            width: 100%;           /* תופס את כל הרוחב של הקונטיינר */
-            height: 100px;         /* גובה קבוע */
-            resize: none;          /* מבטל אפשרות שינוי גודל */
-            overflow-y: auto;      /* מוסיף גלילה אנכית אוטומטית */
-            overflow-x: hidden;    /* מסתיר גלילה אופקית */
-            padding: 0.5rem;       /* ריווח פנימי כמו ב-input המקורי */
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .issues-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        input[type="checkbox"] {
-            width: 1rem;
-            height: 1rem;
-            border-radius: 0.25rem;
-        }
-
-        .status-tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-available { background: #dcfce7; color: #166534; }
-        .status-inUse { background: #dbeafe; color: #1e40af; }
-        .status-maintenance { background: #fef3c7; color: #92400e; }
-
-        .actions-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 1rem;
-            }
-            
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-
-            td, th {
-                white-space: nowrap;
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -298,8 +13,6 @@
     <nav>
         <div class="container">
             <a href="#" class="active" onclick="showSection('inventory')">מלאי</a>
-            <a href="#" onclick="showSection('customers')">לקוחות</a>
-            <a href="#" onclick="showSection('history')">היסטוריה</a>
         </div>
     </nav>
 
@@ -307,7 +20,8 @@
         <div class="card">
             <div class="actions">
                 <h2>מלאי אופניים</h2>
-                <button class="btn-primary" onclick="openModal()">הוספת אופניים +</button>
+                <button class="btn-primary" onclick="openModal('addBikeModal')">הוספת אופניים +</button>
+                <button class="btn-primary" onclick="openModal('searchModal')">חיפוש</button>
             </div>
             <div class="table-container">
                 <table>
@@ -328,6 +42,7 @@
         </div>
     </section>
 
+    <!-- Modal להוספת אופניים -->
     <div id="addBikeModal" class="modal">
         <div class="modal-content">
             <h2>הוספת אופניים חדשים</h2>
@@ -354,9 +69,7 @@
                     </div>
                     <input type="text" name="licenseNumber" id="licenseInput" class="hidden" placeholder="הכנס מספר לוחית">
                 </div>
-                
-    <div class="form-row">
-    <div class="form-group half-width">
+
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasChain" id="hasChain">
@@ -370,98 +83,457 @@
                         <label for="hasCharger">יש מטען</label>
                     </div>
                 </div>
-     </div>
-        
+
                 <div class="form-group">
                     <label>תקלות</label>
                     <textarea name="issues" placeholder="אם יש" class="issues-input"></textarea>
                 </div>
-    
+
                 <div class="actions-group">
                     <button type="submit" class="btn-primary">שמור</button>
-                    <button type="button" class="btn-secondary" onclick="closeModal()">ביטול</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('addBikeModal')">ביטול</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        let bikes = JSON.parse(localStorage.getItem('bikes') || '[]');
+    <!-- Modal לחיפוש -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content">
+            <h2>חיפוש אופניים</h2>
+            <form id="searchForm" onsubmit="searchBikes(event)">
+                <div class="form-group">
+                    <label>מספר סידורי</label>
+                    <input type="text" name="serialNumber">
+                </div>
 
-        function showSection(id) {
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.querySelector(`nav a[onclick*="${id}"]`).classList.add('active');
-            if(id === 'inventory') renderBikes();
-        }
+                <div class="form-group">
+                    <label>סטטוס</label>
+                    <select name="status">
+                        <option value="">כל הסטטוסים</option>
+                        <option value="available">חדש</option>
+                        <option value="inUse">חזר מרוכב</option>
+                        <option value="maintenance">למכירה</option>
+                    </select>
+                </div>
 
-        function toggleLicenseInput() {
-            const hasLicense = document.getElementById('hasLicense').checked;
-            const licenseInput = document.getElementById('licenseInput');
-            licenseInput.classList.toggle('hidden', !hasLicense);
-            licenseInput.required = hasLicense;
-            if(!hasLicense) licenseInput.value = '';
-        }
+                <div class="form-group">
+                    <label>מספר רישוי</label>
+                    <input type="text" name="licenseNumber">
+                </div>
 
-        function openModal() {
-            document.getElementById('addBikeModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('addBikeModal').style.display = 'none';
-            document.getElementById('bikeForm').reset();
-            document.getElementById('licenseInput').classList.add('hidden');
-        }
-
-        function getStatusTag(status) {
-            const statusMap = {
-                'available': ['זמין', 'status-available'],
-                'inUse': ['בשימוש', 'status-inUse'],
-                'maintenance': ['בטיפול', 'status-maintenance']
-            };
-            const [text, className] = statusMap[status] || ['לא ידוע', ''];
-            return `<span class="status-tag ${className}">${text}</span>`;
-        }
-
-        function saveBike(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const bike = Object.fromEntries(formData);
-            bikes.push(bike);
-            localStorage.setItem('bikes', JSON.stringify(bikes));
-            renderBikes();
-            closeModal();
-        }
-
-        function renderBikes() {
-            const html = bikes.map((bike, index) => `
-                <tr>
-                    <td>${bike.serialNumber}</td>
-                    <td>${getStatusTag(bike.status)}</td>
-                    <td>${bike.hasLicense === 'on' ? bike.licenseNumber : 'אין'}</td>
-                    <td>${bike.hasChain === 'on' ? 'כן' : 'לא'}</td>
-                    <td>${bike.hasCharger === 'on' ? 'כן' : 'לא'}</td>
-                    <td>${bike.issues || 'אין'}</td>
-                    <td>
-                        <div class="actions-group">
-                            <button class="btn-danger" onclick="deleteBike(${index})">מחק</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-            document.getElementById('bikesList').innerHTML = html;
-        }
-
-        function deleteBike(index) {
-            if(confirm('האם למחוק אופניים אלו?')) {
-                bikes.splice(index, 1);
-                localStorage.setItem('bikes', JSON.stringify(bikes));
-                renderBikes();
-            }
-        }
-
-        showSection('inventory');
-    </script>
+                <div class="actions-group">
+                    <button type="submit" class="btn-primary">חפש</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('searchModal')">ביטול</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
+
+
+<style>
+    :root {
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --secondary: #64748b;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warning: #eab308;
+        --background: #f1f5f9;
+        --surface: #ffffff;
+        --text: #0f172a;
+        --border: #e2e8f0;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    header {
+        background: var(--primary);
+        color: white;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+        max-width: 1200px;
+        margin: 0 auto;
+        font-size: 1.75rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    nav {
+        background: var(--surface);
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    nav .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-evenly;
+        gap: 1rem;
+    }
+
+    nav a {
+        color: var(--secondary);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    nav a:hover {
+        background: var(--background);
+        color: var(--primary);
+    }
+
+    nav a.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background: var(--surface);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+
+    button {
+        cursor: pointer;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+        background: var(--secondary);
+        color: white;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: right;
+        padding: 1rem;
+        background: var(--background);
+        font-weight: 500;
+        color: var(--secondary);
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    tr:hover {
+        background: var(--background);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        padding: 1rem;
+    }
+
+    .modal.modal-visible {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--surface);
+        max-width: 500px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .issues-input {
+        height: 100px;
+        resize: none;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 0.25rem;
+    }
+
+    .status-tag {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-available { background: #dcfce7; color: #166534; }
+    .status-inUse { background: #dbeafe; color: #1e40af; }
+    .status-maintenance { background: #fef3c7; color: #92400e; }
+
+    .actions-group {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            padding: 1rem;
+        }
+        
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        td, th {
+            white-space: nowrap;
+        }
+
+        .actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .modal-content {
+            margin: 1rem;
+        }
+    }
+</style>
+
+
+<script>
+    // מאגר נתונים
+    let bikes = JSON.parse(localStorage.getItem('bikes') || '[]');
+
+    // פונקציות תצוגה
+    function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        document.querySelector(`nav a[onclick*="${id}"]`).classList.add('active');
+        renderBikes();
+    }
+
+    function getStatusTag(status) {
+        const statusMap = {
+            'available': ['חדש', 'status-available'],
+            'inUse': ['חזר מרוכב', 'status-inUse'],
+            'maintenance': ['למכירה', 'status-maintenance']
+        };
+        const [text, className] = statusMap[status] || ['לא ידוע', ''];
+        return `<span class="status-tag ${className}">${text}</span>`;
+    }
+
+    // ניהול מודאלים
+    function openModal(modalId) {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('modal-visible');
+        });
+        document.getElementById(modalId).classList.add('modal-visible');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('modal-visible');
+        if (modalId === 'addBikeModal') {
+            document.getElementById('bikeForm').reset();
+            document.getElementById('licenseInput').classList.add('hidden');
+        } else if (modalId === 'searchModal') {
+            document.getElementById('searchForm').reset();
+            renderBikes(); // מציג את כל האופניים בעת סגירת חיפוש
+        }
+    }
+
+    // טיפול בטופס הוספת אופניים
+    function toggleLicenseInput() {
+        const hasLicense = document.getElementById('hasLicense').checked;
+        const licenseInput = document.getElementById('licenseInput');
+        licenseInput.classList.toggle('hidden', !hasLicense);
+        licenseInput.required = hasLicense;
+        if (!hasLicense) licenseInput.value = '';
+    }
+
+    function saveBike(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const bikeData = Object.fromEntries(formData);
+        
+        // וולידציה בסיסית
+        if (!bikeData.serialNumber.trim()) {
+            alert('נא להזין מספר סידורי');
+            return;
+        }
+
+        // בדיקת כפילות מספר סידורי
+        const isDuplicate = bikes.some(bike => 
+            bike.serialNumber.toLowerCase() === bikeData.serialNumber.toLowerCase()
+        );
+        
+        if (isDuplicate) {
+            alert('מספר סידורי זה כבר קיים במערכת');
+            return;
+        }
+        
+        if (bikeData.hasLicense === 'on' && !bikeData.licenseNumber.trim()) {
+            alert('נא להזין מספר לוחית רישוי');
+            return;
+        }
+
+        bikes.push(bikeData);
+        localStorage.setItem('bikes', JSON.stringify(bikes));
+        renderBikes();
+        closeModal('addBikeModal');
+    }
+
+    // חיפוש אופניים
+    function searchBikes(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const searchParams = Object.fromEntries(formData);
+        
+        const filteredBikes = bikes.filter(bike => {
+            const serialMatch = !searchParams.serialNumber || 
+                bike.serialNumber.toLowerCase().includes(searchParams.serialNumber.toLowerCase());
+            const statusMatch = !searchParams.status || bike.status === searchParams.status;
+            const licenseMatch = !searchParams.licenseNumber || 
+                (bike.hasLicense === 'on' && 
+                 bike.licenseNumber.toLowerCase().includes(searchParams.licenseNumber.toLowerCase()));
+            
+            return serialMatch && statusMatch && licenseMatch;
+        });
+        
+        renderBikes(filteredBikes);
+        closeModal('searchModal');
+    }
+
+    // הצגת האופניים בטבלה
+    function renderBikes(bikesToRender = bikes) {
+        const html = bikesToRender.map((bike, index) => `
+            <tr>
+                <td>${bike.serialNumber}</td>
+                <td>${getStatusTag(bike.status)}</td>
+                <td>${bike.hasLicense === 'on' ? bike.licenseNumber : 'אין'}</td>
+                <td>${bike.hasChain === 'on' ? 'כן' : 'לא'}</td>
+                <td>${bike.hasCharger === 'on' ? 'כן' : 'לא'}</td>
+                <td>${bike.issues || 'אין'}</td>
+                <td>
+                    <div class="actions-group">
+                        <button class="btn-danger" onclick="deleteBike(${index})">מחק</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+        document.getElementById('bikesList').innerHTML = html;
+    }
+
+    // מחיקת אופניים
+    function deleteBike(index) {
+        if (confirm('האם למחוק אופניים אלו?')) {
+            bikes.splice(index, 1);
+            localStorage.setItem('bikes', JSON.stringify(bikes));
+            renderBikes();
+        }
+    }
+
+    // אתחול המערכת
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('inventory');
+        renderBikes();
+    });
+</script>
