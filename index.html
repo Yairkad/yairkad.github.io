@@ -288,7 +288,7 @@
                 white-space: nowrap;
             }
         }
-    </style>
+    </style> 
 </head>
 <body>
     <header>
@@ -332,6 +332,8 @@
         <div class="modal-content">
             <h2>הוספת אופניים חדשים</h2>
             <form id="bikeForm" onsubmit="saveBike(event)">
+             <div class="form-row">
+                <div class="form-group half-width">
                 <div class="form-group">
                     <label>מספר סידורי</label>
                     <input type="text" name="serialNumber" required>
@@ -346,7 +348,7 @@
                         <option value="maintenance">למכירה</option>
                     </select>
                 </div>
-
+             </div>
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasLicense" id="hasLicense" onchange="toggleLicenseInput()">
@@ -416,9 +418,9 @@
 
         function getStatusTag(status) {
             const statusMap = {
-                'available': ['זמין', 'status-available'],
-                'inUse': ['בשימוש', 'status-inUse'],
-                'maintenance': ['בטיפול', 'status-maintenance']
+                'available': ['חדשות', 'status-available'],
+                'inUse': ['חזר מרוכב', 'status-inUse'],
+                'maintenance': ['מכירה', 'status-maintenance']
             };
             const [text, className] = statusMap[status] || ['לא ידוע', ''];
             return `<span class="status-tag ${className}">${text}</span>`;
