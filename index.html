@@ -8,6 +8,7 @@
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
+            --primary-light: #bfdbfe;
             --secondary: #64748b;
             --success: #22c55e;
             --danger: #ef4444;
@@ -161,48 +162,46 @@
         }
 
         .modal-content {
-            background: #dcf8ff;
-            max-width: 500px;
-            width: 100%;          /* תופס את כל הרוחב עד למקסימום */
-            max-height: 85vh;     /* גובה מקסימלי של 90% מגובה המסך */
-            overflow-y: auto;     /* מוסיף גלילה אוטומטית אם צריך */
-            margin: 2rem auto;
-            padding: 1.5rem;
             background: var(--surface);
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            animation: slideIn 0.3s ease-out;
         }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateY(-10px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .input-error {
+            border-color: var(--danger) !important;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .validation-error {
+            padding: 0.5rem;
+            background: #fff5f5;
+            border: 1px solid var(--danger);
+            border-radius: 0.5rem;
             margin-bottom: 1rem;
+            color: var(--danger);
         }
-        
-        #bikeForm {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            position: relative;  /* בשביל מיקום הכפתורים */
-        }
-        
-        .actions-group {
-            position: sticky;    /* נשאר תמיד בתחתית */
-            bottom: 0;          
-            background: var(--surface);
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            margin-top: auto;   /* דוחף את הכפתורים לתחתית */
-        }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
@@ -219,22 +218,18 @@
         }
 
         .issues-input {
-            width: 100%;           /* תופס את כל הרוחב של הקונטיינר */
-            height: 100px;         /* גובה קבוע */
-            resize: none;          /* מבטל אפשרות שינוי גודל */
-            overflow-y: auto;      /* מוסיף גלילה אנכית אוטומטית */
-            overflow-x: hidden;    /* מסתיר גלילה אופקית */
-            padding: 0.5rem;       /* ריווח פנימי כמו ב-input המקורי */
+            width: 100%;
+            height: 100px;
+            resize: none;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0.5rem;
             border: 1px solid var(--border);
             border-radius: 0.5rem;
             font-size: 1rem;
         }
 
-        .issues-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+        .issues-input:focus,
         input[type="text"]:focus,
         select:focus {
             outline: none;
@@ -274,6 +269,56 @@
             display: none;
         }
 
+        .delete-confirm {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            background: #fff5f5;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                background: var(--surface);
+            }
+            50% {
+                background: var(--primary-light);
+            }
+        }
+
         @media (max-width: 768px) {
             .card {
                 padding: 1rem;
@@ -288,7 +333,7 @@
                 white-space: nowrap;
             }
         }
-    </style> 
+    </style>
 </head>
 <body>
     <header>
@@ -331,54 +376,74 @@
     <div id="addBikeModal" class="modal">
         <div class="modal-content">
             <h2>הוספת אופניים חדשים</h2>
+            <div id="formErrors" class="validation-error" style="display: none;"></div>
             <form id="bikeForm" onsubmit="saveBike(event)">
-             <div class="form-row">
-                <div class="form-group half-width">
-                <div class="form-group">
-                    <label>מספר סידורי</label>
-                    <input type="text" name="serialNumber" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מספר סידורי</label>
+                        <input 
+                            type="text" 
+                            name="serialNumber" 
+                            required
+                            pattern="^[A-Za-z0-9-]{3,}$"
+                            title="מספר סידורי חייב להכיל לפחות 3 תווים (אותיות, מספרים או מקף)"
+                            oninput="validateSerialNumber(this)"
+                        >
+                        <div class="error-message" id="serialError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>סטטוס</label>
+                        <select name="status" required>
+                            <option value="">בחר סטטוס</option>
+                            <option value="available">חדש</option>
+                            <option value="inUse">חזר מרוכב</option>
+                            <option value="maintenance">למכירה</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>סטטוס</label>
-                    <select name="status" required>
-                        <option value="">בחר סטטוס</option>
-                        <option value="available">חדש</option>
-                        <option value="inUse">חזר מרוכב</option>
-                        <option value="maintenance">למכירה</option>
-                    </select>
-                </div>
-             </div>
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox" name="hasLicense" id="hasLicense" onchange="toggleLicenseInput()">
                         <label for="hasLicense">יש לוחית רישוי</label>
                     </div>
-                    <input type="text" name="licenseNumber" id="licenseInput" class="hidden" placeholder="הכנס מספר לוחית">
+                    <input 
+                        type="text" 
+                        name="licenseNumber" 
+                        id="licenseInput" 
+                        class="hidden"
+                        pattern="^[A-Za-z0-9-]{2,}$"
+                        title="מספר רישוי חייב להכיל לפחות 2 תווים"
+                        placeholder="הכנס מספר לוחית"
+                    >
                 </div>
-                
-    <div class="form-row">
-    <div class="form-group half-width">
-                <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" name="hasChain" id="hasChain">
-                        <label for="hasChain">יש שרשרת</label>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="hasChain" id="hasChain">
+                            <label for="hasChain">יש שרשרת</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="hasCharger" id="hasCharger">
+                            <label for="hasCharger">יש מטען</label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" name="hasCharger" id="hasCharger">
-                        <label for="hasCharger">יש מטען</label>
-                    </div>
-                </div>
-     </div>
-        
-                <div class="form-group">
                     <label>תקלות</label>
-                    <textarea name="issues" placeholder="אם יש" class="issues-input"></textarea>
+                    <textarea 
+                        name="issues" 
+                        placeholder="אם יש" 
+                        class="issues-input"
+                        maxlength="500"
+                    ></textarea>
                 </div>
-    
+
                 <div class="actions-group">
                     <button type="submit" class="btn-primary">שמור</button>
                     <button type="button" class="btn-secondary" onclick="closeModal()">ביטול</button>
@@ -398,255 +463,14 @@
             if(id === 'inventory') renderBikes();
         }
 
-        function toggleLicenseInput() {
-            const hasLicense = document.getElementById('hasLicense').checked;
-            const licenseInput = document.getElementById('licenseInput');
-            licenseInput.classList.toggle('hidden', !hasLicense);
-            licenseInput.required = hasLicense;
-            if(!hasLicense) licenseInput.value = '';
-        }
-
-        function openModal() {
-            document.getElementById('addBikeModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('addBikeModal').style.display = 'none';
-            document.getElementById('bikeForm').reset();
-            document.getElementById('licenseInput').classList.add('hidden');
-        }
-
-        function getStatusTag(status) {
-            const statusMap = {
-                'available': ['חדשות', 'status-available'],
-                'inUse': ['חזר מרוכב', 'status-inUse'],
-                'maintenance': ['מכירה', 'status-maintenance']
-            };
-            const [text, className] = statusMap[status] || ['לא ידוע', ''];
-            return `<span class="status-tag ${className}">${text}</span>`;
-        }
-
-        function saveBike(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const bike = Object.fromEntries(formData);
+        function validateSerialNumber(input) {
+            const error = document.getElementById('serialError');
+            const formErrors = document.getElementById('formErrors');
             
-            // בדיקה אם המספר הסידורי כבר קיים
-            const duplicateBike = bikes.find(existingBike => 
-                existingBike.serialNumber === bike.serialNumber
-            );
+            const isDuplicate = bikes.some(bike => bike.serialNumber === input.value);
             
-            if (duplicateBike) {
-                showAlert({
-                    message: 'שגיאה: מספר זה כבר קיים במערכת!',
-                    type: 'error',
-                    actions: [
-                        {
-                            text: 'צפה ברשומה',
-                            type: 'primary',
-                            onClick: () => viewBike(bikes.indexOf(duplicateBike))
-                        },
-                        {
-                            text: 'המשך עריכה',
-                            type: 'secondary',
-                            onClick: () => closeAlert()
-                        }
-                    ]
-                });
-                return;
-            }
-            
-            bikes.push(bike);
-            localStorage.setItem('bikes', JSON.stringify(bikes));
-            renderBikes();
-            closeModal();
-            
-            showAlert({
-                message: 'האופניים נוספו בהצלחה!',
-                type: 'success',
-                timeout: 3000
-            });
-        }
-        
-        function showAlert({ message, type = 'info', timeout = 0, actions = [] }) {
-            // הסרת התראות קודמות
-            closeAlert();
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.id = 'customAlert';
-            alertDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: ${getAlertBackground(type)};
-                color: white;
-                padding: 1rem;
-                border-radius: 0.5rem;
-                z-index: 2000;
-                animation: slideDown 0.3s ease-out;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                min-width: 300px;
-                max-width: 90%;
-            `;
-        
-            const messageDiv = document.createElement('div');
-            messageDiv.style.flex = '1';
-            messageDiv.textContent = message;
-            alertDiv.appendChild(messageDiv);
-        
-            if (actions.length > 0) {
-                const buttonsDiv = document.createElement('div');
-                buttonsDiv.style.display = 'flex';
-                buttonsDiv.style.gap = '0.5rem';
-                
-                actions.forEach(action => {
-                    const button = document.createElement('button');
-                    button.textContent = action.text;
-                    button.className = `btn-${action.type}`;
-                    button.style.cssText = `
-                        padding: 0.25rem 0.75rem;
-                        font-size: 0.875rem;
-                        white-space: nowrap;
-                    `;
-                    button.onclick = action.onClick;
-                    buttonsDiv.appendChild(button);
-                });
-                
-                alertDiv.appendChild(buttonsDiv);
-            }
-        
-            // כפתור סגירה
-            const closeButton = document.createElement('button');
-            closeButton.innerHTML = '×';
-            closeButton.style.cssText = `
-                background: none;
-                border: none;
-                color: white;
-                font-size: 1.5rem;
-                padding: 0;
-                cursor: pointer;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-                margin-right: 0.5rem;
-            `;
-            closeButton.onmouseover = () => closeButton.style.opacity = '1';
-            closeButton.onmouseout = () => closeButton.style.opacity = '0.7';
-            closeButton.onclick = closeAlert;
-            alertDiv.appendChild(closeButton);
-        
-            document.body.appendChild(alertDiv);
-            
-            if (timeout > 0) {
-                setTimeout(closeAlert, timeout);
-            }
-        }
-        
-        function closeAlert() {
-            const existingAlert = document.getElementById('customAlert');
-            if (existingAlert) {
-                existingAlert.style.animation = 'fadeOut 0.3s ease-out';
-                setTimeout(() => existingAlert.remove(), 300);
-            }
-        }
-        
-        function getAlertBackground(type) {
-            const colors = {
-                error: 'var(--danger)',
-                success: 'var(--success)',
-                warning: 'var(--warning)',
-                info: 'var(--primary)'
-            };
-            return colors[type] || colors.info;
-        }
-        
-        function viewBike(index) {
-            // מעבר לרשומה הספציפית - אפשר להרחיב את הפונקציונליות בהמשך
-            const bikeRow = document.querySelectorAll('#bikesList tr')[index];
-            closeAlert();
-            closeModal();
-            
-            if (bikeRow) {
-                // הדגשת השורה הרלוונטית
-                bikeRow.style.animation = 'highlight 2s ease-out';
-                bikeRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-        
-        // הוספת אנימציית הדגשה לטבלה
-        const newStyles = `
-        @keyframes slideDown {
-            from {
-                transform: translate(-50%, -100%);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, 0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
-        }
-        
-        @keyframes highlight {
-            0%, 100% {
-                background: var(--surface);
-            }
-            50% {
-                background: var(--primary-light);
-            }
-        }
-        
-        /* הוספת צבע חדש למערכת */
-        :root {
-            --primary-light: #bfdbfe;
-        }
-        `;
-        
-        // הוספת הסגנונות החדשים לדף
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = newStyles;
-        document.head.appendChild(styleSheet);
-                }
-
-        function renderBikes() {
-            const html = bikes.map((bike, index) => `
-                <tr>
-                    <td>${bike.serialNumber}</td>
-                    <td>${getStatusTag(bike.status)}</td>
-                    <td>${bike.hasLicense === 'on' ? bike.licenseNumber : 'אין'}</td>
-                    <td>${bike.hasChain === 'on' ? 'כן' : 'לא'}</td>
-                    <td>${bike.hasCharger === 'on' ? 'כן' : 'לא'}</td>
-                    <td>${bike.issues || 'אין'}</td>
-                    <td>
-                        <div class="actions-group">
-                            <button class="btn-danger" onclick="deleteBike(${index})">מחק</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-            document.getElementById('bikesList').innerHTML = html;
-        }
-
-        function deleteBike(index) {
-            if(confirm('האם למחוק אופניים אלו?')) {
-                bikes.splice(index, 1);
-                localStorage.setItem('bikes', JSON.stringify(bikes));
-                renderBikes();
-            }
-        }
-
-        showSection('inventory');
-    </script>
-</body>
-</html>
+            if (isDuplicate) {
+                input.classList.add('input-error');
+                error.textContent = 'מספר סידורי זה כבר קיים במערכת';
+                formErrors.style.display = 'block';
+                formErrors.textContent = 'נא לתקן את
